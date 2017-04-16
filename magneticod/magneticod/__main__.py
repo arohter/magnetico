@@ -128,10 +128,12 @@ def on_metadata_found(info_hash: dht.InfoHash, metadata: bytes) -> None:
 def on_peer_error(peer: bittorrent.DisposablePeer, info_hash: dht.InfoHash) -> None:
     global peers, selector
     peer.shutdown()
-    if peer in peers[info_hash]:
+    try:
         peers[info_hash].remove(peer)
-    selector.unregister(peer)
-
+        selector.unregister(peer)
+    except Exception:
+        pass
+    
 
 def loop() -> None:
     global selector, node, peers
